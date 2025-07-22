@@ -1,0 +1,2 @@
+print "Hello World"; // expect: Hello World
+print "こんにちは、世界"; // expect: こんにちは、世界
