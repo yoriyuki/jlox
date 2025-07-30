@@ -4,6 +4,7 @@ import java.util.*;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.stream.Stream;
+import static java.lang.System.exit;
 
 
 public class LoxTestRunner {
@@ -15,26 +16,31 @@ public class LoxTestRunner {
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.err.println("Usage: java LoxTestRunner <file> or <dir> ...");
-            System.exit(64);
+            exit(64);
         }
-
+        long fail = 0;
         for (String arg : args) {
             Path top = Paths.get(arg);
             try (Stream<Path> paths = Files.walk(top)) {
-                paths.filter(Files::isRegularFile) // ファイルだけに絞る
+                fail = fail + paths.filter(Files::isRegularFile) // ファイルだけに絞る
                         .filter(path -> path.getFileName().toString().endsWith(".lox"))
-                        .forEach(path -> {
+                        .filter(path -> {
+                            boolean ok;
                             try {
-                                runTest(path);// ここにファイル処理を書く
+                                ok = runTest(path);// ここにファイル処理を書く
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                            System.out.println("見つけたファイル: " + path.toString());
-                        });
+                            //System.out.println("見つけたファイル: " + path.toString());
+                            return !ok;
+                        })
+                        .count();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        System.out.println("失敗: " + fail);
+        exit((int)fail);
     }
 
     static TestExpectation extractExpectedOutput(File testFile) throws IOException {
@@ -57,7 +63,7 @@ public class LoxTestRunner {
         return result;
     }
 
-    static void runTest(Path path) throws IOException {
+    static boolean runTest(Path path) throws IOException {
         ProcessBuilder builder = new ProcessBuilder(
                 "java",
                 "-cp", "out/production/jlox",
@@ -93,7 +99,7 @@ public class LoxTestRunner {
                 System.out.println("Expected error: " + expectation.runtimeError);
                 System.out.println("Got: " + output);
             }
-            return;
+            return false;
         }
 
         int min = Math.min(expectation.expectedLines.size(), output.size());
@@ -118,8 +124,10 @@ public class LoxTestRunner {
 // 最終的な判定
         if (passed) {
             System.out.println("PASS: " + path.toString());
+            return true;
         } else {
             System.out.println("FAIL: " + path.toString());
+            return false;
         }
     }
 }
