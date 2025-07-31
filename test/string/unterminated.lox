@@ -1,2 +1,1 @@
-// [line 2] Error: Unterminated string.
-"this string has no close quote
+"this string has no close quot // Error: Unterminated string.

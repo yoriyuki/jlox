@@ -25,14 +25,13 @@ public class LoxTestRunner {
                 fail = fail + paths.filter(Files::isRegularFile) // ファイルだけに絞る
                         .filter(path -> path.getFileName().toString().endsWith(".lox"))
                         .filter(path -> {
-                            boolean ok;
                             try {
-                                ok = runTest(path);// ここにファイル処理を書く
+                                return  !runTest(path);// ここにファイル処理を書く
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                                return true;
                             }
                             //System.out.println("見つけたファイル: " + path.toString());
-                            return !ok;
                         })
                         .count();
             } catch (IOException e) {
@@ -47,19 +46,18 @@ public class LoxTestRunner {
         TestExpectation result = new TestExpectation();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(testFile))) {
-            String line;
+            String line = null;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("// expect:")) {
                     result.expectedLines.add(line.split("// expect:")[1].trim());
                 } else if (line.contains("// expect runtime error:")) {
                     result.runtimeError = line.split("// expect runtime error:")[1]
                             .replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", "");
-                } else if (line.contains("Error at")) {
+                } else if (line.contains("Error")) {
                     result.expectedLines.add(line.split("//")[1].trim());
                 }
             }
         }
-
         return result;
     }
 
@@ -98,8 +96,10 @@ public class LoxTestRunner {
                 System.out.println("FAIL (missing runtime error): " + path);
                 System.out.println("Expected error: " + expectation.runtimeError);
                 System.out.println("Got: " + output);
+                return false;
+            } else {
+                return true;
             }
-            return false;
         }
 
         int min = Math.min(expectation.expectedLines.size(), output.size());
@@ -123,11 +123,13 @@ public class LoxTestRunner {
 
 // 最終的な判定
         if (passed) {
-            System.out.println("PASS: " + path.toString());
+            //System.out.println("PASS: " + path.toString());
             return true;
         } else {
-            System.out.println("FAIL: " + path.toString());
-            return false;
+            System.out.println("Expected" + expectation.expectedLines);
+            System.out.println("Got:      " + output);
+            System.out.println("FAIL: " + path);
         }
+        return false;
     }
 }
