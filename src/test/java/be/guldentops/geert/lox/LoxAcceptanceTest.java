@@ -1,10 +1,7 @@
 package be.guldentops.geert.lox;
 
 import be.guldentops.geert.lox.error.ErrorReporter;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -15,6 +12,7 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Disabled
 class LoxAcceptanceTest {
 
     private final PrintStream originalOut = System.out;

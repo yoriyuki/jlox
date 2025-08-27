@@ -62,12 +62,20 @@ public class LoxTestRunner {
     }
 
     static boolean runTest(Path path) throws IOException {
+        String classpath = "target/classes:target/test-classes";
+
         ProcessBuilder builder = new ProcessBuilder(
                 "java",
-                "-cp", "out/production/jlox",
+                "-cp", classpath, // ◀︎◀︎◀︎ 正しい地図に書き換える
                 "com.craftinginterpreters.lox.Lox",
                 path.toString()
         );
+//        ProcessBuilder builder = new ProcessBuilder(
+//                "java",
+//                "-cp", "out/production/jlox",
+//                "com.craftinginterpreters.lox.Lox",
+//                path.toString()
+//        );
 //        builder.redirectInput(testFile);
         builder.redirectErrorStream(true);
 

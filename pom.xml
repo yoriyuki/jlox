@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>sample-junit</artifactId>
+    <artifactId>jlox</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -32,6 +32,14 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <classpathScope>test</classpathScope>
+                </configuration>
+            </plugin>
             <!-- テストをJUnit 5で走らせるための設定 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -46,5 +54,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
