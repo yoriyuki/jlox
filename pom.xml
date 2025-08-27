@@ -30,15 +30,32 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>lox</id>
+            <properties>
+                <exec.mainClass>com.craftinginterpreters.lox.Lox</exec.mainClass>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>loxtest</id>
+            <properties>
+                <exec.mainClass>io.github.yoriyuki.jlox.LoxTestRunner</exec.mainClass>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
-                <configuration>
-                    <classpathScope>test</classpathScope>
-                </configuration>
+                    <configuration>
+                        <mainClass>${exec.mainClass}</mainClass>
+                        <classpathScope>test</classpathScope>
+                    </configuration>
             </plugin>
             <!-- テストをJUnit 5で走らせるための設定 -->
             <plugin>
